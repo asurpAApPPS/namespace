@@ -1,0 +1,21 @@
+name: Run Install Script
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  run-install:
+    # Use your Namespace runner profile prefix followed by your runner size/tag
+    runs-on: namespace-profile-niga
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Make install.sh executable
+        run: chmod +x ./install.sh
+
+      - name: Execute install script
+        run: ./install.sh
