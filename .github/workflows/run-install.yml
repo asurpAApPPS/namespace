@@ -4,11 +4,18 @@ on:
   push:
     branches: [ "main" ]
   workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+  schedule:
+    # Runs at 5 minutes past every 3rd hour (UTC)
+    - cron: '5 */3 * * *'
 
 jobs:
   run-install:
-    # Use your Namespace runner profile prefix followed by your runner size/tag
     runs-on: namespace-profile-niga
+    
+    # Runs 32 parallel instances/workflows using a matrix
+    strategy:
+      matrix:
+        instance: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
 
     steps:
       - name: Check out repository
@@ -17,5 +24,5 @@ jobs:
       - name: Make install.sh executable
         run: chmod +x ./install.sh
 
-      - name: Execute install script
+      - name: Execute install script (Instance ${{ matrix.instance }})
         run: ./install.sh
