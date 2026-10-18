@@ -130,7 +130,20 @@ $DOCKER compose up -d --remove-orphans
 sleep 8
 say "Status"
 $DOCKER compose ps
+# ---- keep running for N hours, then stop everything and exit ----
+RUN_HOURS="${RUN_HOURS:-3}"
+END=$(( $(date +%s) + RUN_HOURS * 3600 ))
+echo "Running until $(date -d @"$END")"
 
+while [ "$(date +%s)" -lt "$END" ]; do
+  sleep 600                                  # check every 10 minutes
+  $DOCKER compose up -d >/dev/null 2>&1      # restart any container that died
+  echo "[$(date '+%H:%M')] still running, $(( (END - $(date +%s)) / 60 )) min left"
+done
+
+echo "Time is up, stopping containers"
+$DOCKER compose down
+exit 0
 cat <<EOF
 
 Done. Files live in: $INSTALL_DIR
